@@ -6,4 +6,4 @@
 
 IP 158.160.78.227   
 
-Backend https://kuchueva-diplom.nomoredomainsicu.ru;  
+Backend https://api.kuchueva-diplom.nomoredomainsicu.ru;  
