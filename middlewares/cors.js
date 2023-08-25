@@ -1,8 +1,8 @@
 const allowedCors = [
   'https://kuchueva-diplom.nomoredomainsicu.ru',
   'http://kuchueva-diplom.nomoredomainsicu.ru',
-  'https://localhost:4000',
-  'http://localhost:4000',
+  'https://localhost:3000',
+  'http://localhost:3000',
 ];
 
 module.exports = (req, res, next) => {
