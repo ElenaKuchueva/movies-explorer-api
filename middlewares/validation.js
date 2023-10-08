@@ -2,15 +2,11 @@ const { celebrate, Joi } = require("celebrate");
 
 const urlRegex =
   /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_+.~#?&//=]*)/;
-const emailRegex = /[a-zA-Z0-9_.]+@[a-zA-Z0-9_]+\\.[a-z]{2,}/;
 
 // auth
 const validationCreateNewUser = celebrate({
   body: Joi.object().keys({
-    email: Joi.string()
-      .required()
-      // .email({ tlds: { allow: false } }),
-      .pattern(emailRegex),
+    email: Joi.string().required().email(),
     password: Joi.string().required().min(8),
     name: Joi.string().min(2).max(30),
   }),
@@ -18,10 +14,7 @@ const validationCreateNewUser = celebrate({
 
 const validationLogin = celebrate({
   body: Joi.object().keys({
-    email: Joi.string()
-      .required()
-      // .email({ tlds: { allow: false } }),
-      .pattern(emailRegex),
+    email: Joi.string().required().email(),
     password: Joi.string().required(),
   }),
 });
@@ -30,10 +23,7 @@ const validationLogin = celebrate({
 const validationUpdateUser = celebrate({
   body: Joi.object().keys({
     name: Joi.string().required().min(2).max(30),
-    email: Joi.string()
-      .required()
-      // .email({ tlds: { allow: false } }),
-      .pattern(emailRegex),
+    email: Joi.string().required().email(),
   }),
 });
 
