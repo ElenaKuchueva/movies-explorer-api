@@ -1,13 +1,16 @@
-const { celebrate, Joi } = require('celebrate');
+const { celebrate, Joi } = require("celebrate");
 
-const urlRegex = /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_+.~#?&//=]*)/;
+const urlRegex =
+  /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_+.~#?&//=]*)/;
+const emailRegex = /[a-zA-Z0-9_.]+@[a-zA-Z0-9_]+\\.[a-z]{2,}/;
 
 // auth
 const validationCreateNewUser = celebrate({
   body: Joi.object().keys({
     email: Joi.string()
       .required()
-      .email({ tlds: { allow: false } }),
+      // .email({ tlds: { allow: false } }),
+      .pattern(emailRegex),
     password: Joi.string().required().min(8),
     name: Joi.string().min(2).max(30),
   }),
@@ -17,7 +20,8 @@ const validationLogin = celebrate({
   body: Joi.object().keys({
     email: Joi.string()
       .required()
-      .email({ tlds: { allow: false } }),
+      // .email({ tlds: { allow: false } }),
+      .pattern(emailRegex),
     password: Joi.string().required(),
   }),
 });
@@ -28,7 +32,8 @@ const validationUpdateUser = celebrate({
     name: Joi.string().required().min(2).max(30),
     email: Joi.string()
       .required()
-      .email({ tlds: { allow: false } }),
+      // .email({ tlds: { allow: false } }),
+      .pattern(emailRegex),
   }),
 });
 

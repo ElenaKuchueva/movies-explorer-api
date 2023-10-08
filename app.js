@@ -2,6 +2,7 @@ require('dotenv').config();
 const express = require('express');
 const mongoose = require('mongoose');
 const helmet = require('helmet');
+// const cors= require('cors');
 // const limiter = require('express-rate-limit');
 const { errors } = require('celebrate');
 const cors = require('./middlewares/cors');
@@ -18,6 +19,7 @@ mongoose.connect('mongodb://localhost:27017/bitfilmsdb');
 app.use(express.json());
 
 app.use(helmet());
+// app.use(cors({ origin: 'http://localhost:3001' }));
 app.use(cors);
 
 app.use(requestLogger);
