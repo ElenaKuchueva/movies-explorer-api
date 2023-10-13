@@ -2,6 +2,8 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const User = require('../models/user');
 
+const { NODE_ENV, JWT_SECRET } = process.env;
+
 const { STATUS_CREATED } = require('../errors/err');
 
 const BadRequest = require('../errors/badRequest');
@@ -25,10 +27,10 @@ module.exports.getUserInfo = (req, res, next) => {
 }; //
 
 module.exports.updateUserInfo = (req, res, next) => {
-  const { email, name } = req.body;
+  const { name, email } = req.body;
   User.findByIdAndUpdate(
     req.user._id,
-    { email, name },
+    { name, email },
     { new: true, runValidators: true },
   )
     .orFail(() => {
@@ -49,13 +51,13 @@ module.exports.updateUserInfo = (req, res, next) => {
 };
 
 module.exports.createNewUser = (req, res, next) => {
-  const { email, password, name } = req.body;
+  const { name, email, password } = req.body;
   bcrypt
     .hash(password, 10)
     .then((hash) => User.create({
-      email,
-      password: hash, // записываем хеш в базу
       name,
+      email,
+      password: hash,
     }))
     .then((user) => res.status(STATUS_CREATED).send({
       _id: user._id,
@@ -82,9 +84,11 @@ module.exports.login = (req, res, next) => {
 
   return User.findUserByCredentials(email, password)
     .then((user) => {
-      const token = jwt.sign({ _id: user._id }, 'some-secret-key', {
-        expiresIn: '7d',
-      });
+      const token = jwt.sign(
+        { _id: user._id },
+        NODE_ENV === 'production' ? JWT_SECRET : 'dev-secret',
+        { expiresIn: '7d' },
+      );
       res.send({ token });
     })
     .catch(next);
