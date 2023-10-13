@@ -13,8 +13,10 @@ const { PORT = 4000 } = process.env;
 
 const app = express();
 app.use(limiter);
-mongoose.connect('mongodb://127.0.0.1:27017/bitfilmsdb');
 
+mongoose.connect("mongodb://127.0.0.1:27017/bitfilmsdb", {
+  useNewUrlParser: true,
+});
 app.use(express.json());
 
 app.use(helmet());
