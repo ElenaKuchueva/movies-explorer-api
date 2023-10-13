@@ -10,8 +10,7 @@ const Conflict = require('../errors/Conflict');
 
 module.exports.getUserInfo = (req, res, next) => {
   const userId = req.user._id;
-  User
-    .findById(userId)
+  User.findById(userId)
     .orFail(() => {
       next(new NotFound('По указанному _id пользователь не найден'));
     })
@@ -27,12 +26,11 @@ module.exports.getUserInfo = (req, res, next) => {
 
 module.exports.updateUserInfo = (req, res, next) => {
   const { email, name } = req.body;
-  User
-    .findByIdAndUpdate(
-      req.user._id,
-      { email, name },
-      { new: true, runValidators: true },
-    )
+  User.findByIdAndUpdate(
+    req.user._id,
+    { email, name },
+    { new: true, runValidators: true },
+  )
     .orFail(() => {
       next(new NotFound('Пользователь по указанному _id не найден'));
     })
@@ -59,16 +57,23 @@ module.exports.createNewUser = (req, res, next) => {
       password: hash, // записываем хеш в базу
       name,
     }))
-    .then((user) => res.status(STATUS_CREATED).send({
-      email: user.email,
-      name: user.name,
-      _id: user._id,
-    }))
+    .then((user) => {
+      const { _id } = user;
+      return res.status(STATUS_CREATED).send({
+        email,
+        name,
+        _id,
+      });
+    })
     .catch((err) => {
       if (err.code === 11000) {
         next(new Conflict('Пользователь с такой почтой зарегестрирован'));
       } else if (err.name === 'ValidationError') {
-        next(new BadRequest('Переданы некорректные данные при создании пользователя'));
+        next(
+          new BadRequest(
+            'Переданы некорректные данные при создании пользователя',
+          ),
+        );
       } else {
         next(err);
       }
@@ -78,15 +83,15 @@ module.exports.createNewUser = (req, res, next) => {
 module.exports.login = (req, res, next) => {
   const { email, password } = req.body;
 
-  return User
-    .findUserByCredentials(email, password)
+  return User.findUserByCredentials(email, password)
     .then((user) => {
-      const token = jwt.sign(
-        { _id: user._id },
-        'some-secret-key',
-        { expiresIn: '7d' },
-      );
-      res.send({ token });
+      const token = jwt.sign({ _id: user._id }, 'some-secret-key', {
+        expiresIn: '7d',
+      });
+      res.send({
+        token,
+        user: {},
+      });
     })
     .catch(next);
 };
