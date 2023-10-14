@@ -10,7 +10,7 @@ const centralErrorHandler = require('./middlewares/centralErrorHandler');
 const { requestLogger, errorLogger } = require('./middlewares/logger');
 
 const { PORT = 4000 } = process.env;
-
+// const { PORT = 3000 } = process.env;
 const app = express();
 app.use(limiter);
 
@@ -24,6 +24,7 @@ app.use(
   cors({
     origin: [
       'http://localhost:3001',
+      'http://localhost:3000',
       'https://kuchueva-diplom.nomoredomainsicu.ru',
     ],
   }),
