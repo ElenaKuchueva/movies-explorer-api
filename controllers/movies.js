@@ -13,7 +13,7 @@ module.exports.getAllMovies = (req, res, next) => {
 
 module.exports.createMovie = (req, res, next) => {
   const owner = req.user._id;
-  Movie.create({ ...req.body, owner })
+  Movie.create({ owner, ...req.body })
     .then((movie) => res.status(STATUS_CREATED).send(movie))
     .catch((err) => {
       if (err.name === 'ValidationError') {

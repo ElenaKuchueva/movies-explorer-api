@@ -17,14 +17,8 @@ module.exports.getUserInfo = (req, res, next) => {
       next(new NotFound('По указанному _id пользователь не найден'));
     })
     .then((user) => res.send(user))
-    .catch((err) => {
-      if (err.name === 'CastError') {
-        next(new BadRequest('Переданы некорректные данные'));
-      } else {
-        next(err);
-      }
-    });
-}; //
+    .catch(next);
+};
 
 module.exports.updateUserInfo = (req, res, next) => {
   const { name, email } = req.body;
@@ -59,11 +53,15 @@ module.exports.createNewUser = (req, res, next) => {
       email,
       password: hash,
     }))
-    .then((user) => res.status(STATUS_CREATED).send({
-      _id: user._id,
-      name: user.name,
-      email: user.email,
-    }))
+    .then((user) => {
+      const { _id } = user;
+
+      return res.status(STATUS_CREATED).send({
+        email,
+        name,
+        _id,
+      });
+    })
     .catch((err) => {
       if (err.code === 11000) {
         next(new Conflict('Пользователь с такой почтой зарегестрирован'));
